@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        <title>Displaying text directions with <code>setPanel()</code></title>
+        <style>
+            /* Always set the map height explicitly to define the size of the div
+             * element that contains the map. */
+            #map {
+                height: 100%;
+            }
+            /* Optional: Makes the sample page fill the window. */
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #floating-panel {
+                position: absolute;
+                top: 10px;
+                left: 25%;
+                z-index: 5;
+                background-color: #fff;
+                padding: 5px;
+                border: 1px solid #999;
+                text-align: center;
+                font-family: 'Roboto','sans-serif';
+                line-height: 30px;
+                padding-left: 10px;
+            }
+            #right-panel {
+                font-family: 'Roboto','sans-serif';
+                line-height: 30px;
+                padding-left: 10px;
+            }
+
+            #right-panel select, #right-panel input {
+                font-size: 15px;
+            }
+
+            #right-panel select {
+                width: 100%;
+            }
+
+            #right-panel i {
+                font-size: 12px;
+            }
+            #right-panel {
+                height: 100%;
+                float: right;
+                width: 390px;
+                overflow: auto;
+            }
+            #map {
+                margin-right: 400px;
+            }
+            #floating-panel {
+                background: #fff;
+                padding: 5px;
+                font-size: 14px;
+                font-family: Arial;
+                border: 1px solid #ccc;
+                box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4);
+                display: none;
+            }
+            @media print {
+                #map {
+                    height: 500px;
+                    margin: 0;
+                }
+                #right-panel {
+                    float: none;
+                    width: auto;
+                }
+                #options-box {
+                    background: #fff;
+                    border: 1px solid #999;
+                    border-radius: 3px;
+                    height: 100%;
+                    line-height: 35px;
+                    padding: 10px 10px 30px 10px;
+                    text-align: left;
+                    width: 340px;
+                }
+
+
+            }
+        </style>
+
+    </head>
+
+
+    <body>
+
+        <div id="floating-panel">
+
+            <strong>BOTECO</strong>
+            <select id="end">
+                <option value=" null">SELECIONE O BOTECO</option>
+                <option value=" -20.0211608, -48.938784">Agua Doce Cachaçaria</option>
+                <option value=" -20.025319, -48.9268856">Restaurante Calangos</option>
+                <option value="-20.0234306, -48.9398441">Bar Mineirão</option>
+                <option value="-20.0252856, -48.9348482">Sansetto Restaurante</option>
+                <option value="-20.0217386, -48.9387008">Spaço Gastrobar</option>
+                <option value="-20.0318273, -48.9219423">Mega Lanches</option>
+                <option value="-20.0179169, -48.9528189">Mouro Café</option>
+                <option value="-20.0242798, -48.9398039">Restaurante Maria Fumaça</option>
+
+            </select>
+        </div>
+
+        <div id="right-panel"></div>
+        <div id="map"></div>
+
+
+
+
+        <script>
+            var latitude;
+            var longitude;
+
+            var onSuccess = function (position) {
+
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+
+            };
+
+            // onError Callback receives a PositionError object
+            //
+            function onError(error) {
+                alert('code: ' + error.code + '\n' +
+                        'message: ' + error.message + '\n');
+            }
+
+
+            function initMap() {
+
+                navigator.geolocation.getCurrentPosition(onSuccess, onError);// CHAMA FUNÇÃO BUSCAR COORDENADAS
+
+                var directionsDisplay = new google.maps.DirectionsRenderer;
+                var directionsService = new google.maps.DirectionsService;
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 15,
+                    center: {lat: -20.023172, lng: -48.9389985}
+                });
+               
+                       
+                
+                directionsDisplay.setMap(map);
+                directionsDisplay.setPanel(document.getElementById('right-panel'));
+
+                var control = document.getElementById('floating-panel');
+                control.style.display = 'block';
+                map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
+
+                var onChangeHandler = function () {
+                    calculateAndDisplayRoute(directionsService, directionsDisplay);
+                };
+
+                document.getElementById('end').addEventListener('change', onChangeHandler);
+            }
+            
+            
+            
+
+            function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+                var start = new google.maps.LatLng(latitude, longitude);
+                var end = document.getElementById('end').value;
+                directionsService.route({
+                    origin: start,
+                    destination: end,
+                    travelMode: 'DRIVING'
+                }, function (response, status) {
+                    if (status === 'OK') {
+                        directionsDisplay.setDirections(response);
+                    } else {
+                        window.alert('SOLICITAÇÃO FALHOU! NAVEGADOR NÃO COMPATÍVEL ');
+                    }
+                });
+                
+                
+                
+            }
+            
+            
+            
+            
+        </script>
+
+
+        <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF64r7CLxA56QcLqe6dOKh-nKlGPqFEXY&callback=initMap">
+        </script>
+    </body>
+</html>

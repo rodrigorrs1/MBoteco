@@ -1,0 +1,15 @@
+{
+    "name": "sssss",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "Geovane-Note",
+    "contributors": [
+    ],
+    "dependencies": {}
+}
